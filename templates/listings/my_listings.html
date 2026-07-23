@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-box"></i> My Listings</h1>
+        <a href="{% url 'listing-create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Item
+        </a>
+    </div>
+    
+    {% if listings %}
+        <div class="row">
+            {% for listing in listings %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card card-hover h-100 shadow-sm">
+                    {% if listing.image %}
+                    <img src="{{ listing.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ listing.title }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/400x250?text=No+Image" class="card-img-top">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="badge bg-secondary mb-2">{{ listing.get_category_display }}</span>
+                        <h5 class="card-title">{{ listing.title|truncatechars:35 }}</h5>
+                        <div class="mb-2">
+                            <span class="price-tag">PKR{{ listing.price_per_day }}</span>
+                            <small class="text-muted">/day</small>
+                        </div>
+                        <div class="small text-muted">
+                            <i class="fas fa-map-marker-alt"></i> {{ listing.city }}
+                            <br>
+                            <i class="fas fa-calendar"></i> Listed: {{ listing.created_at|date:"d M Y" }}
+                        </div>
+                        <div class="mt-2">
+                            {% if listing.is_available %}
+                                <span class="badge bg-success">Available</span>
+                            {% else %}
+                                <span class="badge bg-danger">Not Available</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'listing-detail' listing.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <div class="btn-group">
+                                <a href="{% url 'listing-edit' listing.id %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="{% url 'toggle-availability' listing.id %}" class="btn btn-sm btn-info">
+                                    {% if listing.is_available %}
+                                        <i class="fas fa-ban"></i> Mark Unavailable
+                                    {% else %}
+                                        <i class="fas fa-check"></i> Mark Available
+                                    {% endif %}
+                                </a>
+                                <a href="{% url 'listing-delete' listing.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this item?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if listings.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if listings.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ listings.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in listings.paginator.page_range %}
+                    {% if listings.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > listings.number|add:'-3' and num < listings.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if listings.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ listings.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        
+    {% else %}
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> You haven't listed any items yet.
+            <br>
+            <a href="{% url 'listing-create' %}" class="btn btn-primary mt-3">Add Your First Item</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

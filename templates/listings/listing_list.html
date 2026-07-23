@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="mb-4"><i class="fas fa-list"></i> All Items for Rent</h1>
+    
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Search</label>
+                    <input type="text" name="search" class="form-control" value="{{ request.GET.search }}" placeholder="Search items...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">City</label>
+                    <input type="text" name="city" class="form-control" value="{{ request.GET.city }}" placeholder="Enter city">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Min Price</label>
+                    <input type="number" name="min_price" class="form-control" value="{{ request.GET.min_price }}" placeholder="Min Price">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Max Price</label>
+                    <input type="number" name="max_price" class="form-control" value="{{ request.GET.max_price }}" placeholder="Max Price">
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Results Count -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <p class="text-muted">Found {{ listings|length }} items</p>
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-sort"></i> Sort By
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="?sort=price_low">Price: Low to High</a></li>
+                <li><a class="dropdown-item" href="?sort=price_high">Price: High to Low</a></li>
+                <li><a class="dropdown-item" href="?sort=newest">Newest First</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Listings Grid -->
+    {% if listings %}
+    <div class="row">
+        {% for listing in listings %}
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card card-hover h-100 shadow-sm">
+                {% if listing.image %}
+                <img src="{{ listing.image.url }}" class="card-img-top listing-image" alt="{{ listing.title }}">
+                {% else %}
+                <img src="https://via.placeholder.com/400x250?text=No+Image" class="card-img-top listing-image">
+                {% endif %}
+                <div class="card-body">
+                    <span class="badge bg-secondary mb-2">{{ listing.get_category_display }}</span>
+                    <h6 class="card-title">{{ listing.title|truncatechars:35 }}</h6>
+                    <div class="mb-2">
+                        <span class="price-tag">PKR{{ listing.price_per_day }}</span>
+                        <small class="text-muted">/day</small>
+                    </div>
+                    <div class="small text-muted">
+                        <i class="fas fa-map-marker-alt"></i> {{ listing.city }}
+                        <br>
+                        <i class="fas fa-user"></i> {{ listing.owner.username }}
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{% url 'listing-detail' listing.id %}" class="btn btn-sm btn-outline-primary w-100">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center">
+        <i class="fas fa-frown"></i> No items found matching your criteria.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

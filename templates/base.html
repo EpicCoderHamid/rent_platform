@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Rentify - Pakistan's #1 Rental Marketplace</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #fafbfc;
+            min-height: 100vh;
+            color: #1a1f36;
+            overflow-x: hidden;
+        }
+        
+        /* ========== PREMIUM COLOR SCHEME ========== */
+        :root {
+            --primary: #0066ff;
+            --primary-dark: #0052cc;
+            --primary-light: #3385ff;
+            --primary-soft: #e6f0ff;
+            --secondary: #6c47ff;
+            --secondary-light: #8f72ff;
+            --secondary-soft: #f0ebff;
+            --accent: #ff6b35;
+            --accent-light: #ff8a5c;
+            --success: #00b87a;
+            --success-light: #00d68f;
+            --danger: #ff3b3b;
+            --warning: #ffb800;
+            --info: #00b8d4;
+            --dark: #1a1f36;
+            --gray: #697386;
+            --gray-light: #a3acb9;
+            --light: #f7f9fc;
+            --white: #ffffff;
+            --border-light: #e3e8ee;
+            
+            --shadow-xs: 0 1px 2px rgba(0,0,0,0.03);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.06);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.08);
+            --shadow-xl: 0 24px 64px rgba(0,0,0,0.10);
+        }
+        
+        /* ========== ANIMATIONS ========== */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ========== NAVBAR ========== */
+        .navbar {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-light);
+            transition: all 0.25s ease;
+        }
+        
+        .navbar.scrolled {
+            padding: 0.75rem 0;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            letter-spacing: -0.3px;
+        }
+        
+        .navbar-brand i {
+            color: var(--primary);
+            margin-right: 6px;
+        }
+        
+        .navbar-brand span {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: var(--gray) !important;
+            transition: all 0.2s ease;
+            margin: 0 0.25rem;
+            padding: 0.5rem 1rem !important;
+            border-radius: 12px;
+        }
+        
+        .nav-link:hover {
+            color: var(--dark) !important;
+            background: var(--light);
+        }
+        
+        .nav-link i {
+            margin-right: 6px;
+            font-size: 0.9rem;
+        }
+        
+        /* ========== LOCATION BUTTON ========== */
+        .location-btn {
+            background: var(--light);
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 10px 18px;
+            font-weight: 500;
+            color: var(--dark);
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .location-btn:hover {
+            background: var(--white);
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .location-btn i {
+            color: var(--primary);
+            margin-right: 6px;
+        }
+        
+        /* ========== HERO SECTION ========== */
+        .hero-section {
+            padding: 120px 0 80px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, #66a6e6 0%, #f0f4f8 100%);
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -15%;
+            width: 70%;
+            height: 140%;
+            background: radial-gradient(circle at 30% 50%, rgba(0,102,255,0.04) 0%, transparent 60%);
+            z-index: 0;
+        }
+        
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 60%;
+            height: 120%;
+            background: radial-gradient(circle at 70% 30%, rgba(108,71,255,0.03) 0%, transparent 60%);
+            z-index: 0;
+        }
+        
+        .hero-title {
+            font-size: 3.75rem;
+            font-weight: 800;
+            line-height: 1.15;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+        
+        .hero-title span {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+        
+        /* ========== SEARCH BAR ========== */
+        .search-wrapper {
+            max-width: 560px;
+        }
+        
+        .search-container {
+            background: var(--white);
+            border-radius: 60px;
+            padding: 5px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            transition: all 0.2s ease;
+        }
+        
+        .search-container:focus-within {
+            box-shadow: var(--shadow-xl), 0 0 0 4px rgba(0,102,255,0.1);
+            border-color: var(--primary);
+        }
+        
+        .search-input {
+            background: transparent;
+            border: none;
+            padding: 16px 24px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        
+        .search-input::placeholder {
+            color: var(--gray-light);
+        }
+        
+        .search-input:focus {
+            outline: none;
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 32px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .search-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-btn i {
+            margin-right: 8px;
+        }
+        
+        /* ========== STATS CARD ========== */
+        .stats-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 0 12px;
+        }
+        
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--primary-soft) 0%, var(--secondary-soft) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* ========== POPULAR TAGS ========== */
+        .popular-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .popular-tag {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .popular-tag:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .popular-tag i {
+            margin-right: 6px;
+            font-size: 0.8rem;
+        }
+        
+        /* ========== BUTTONS ========== */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            border-radius: 14px;
+            padding: 12px 28px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,102,255,0.3);
+            color: white;
+        }
+        
+        .btn-outline-primary {
+            border-radius: 14px;
+            border: 1.5px solid var(--border-light);
+            color: var(--dark);
+            font-weight: 500;
+            padding: 10px 22px;
+            background: var(--white);
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--light);
+            border-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .btn-sm {
+            padding: 8px 18px;
+            font-size: 0.9rem;
+        }
+        
+        /* ========== MOBILE BOTTOM NAV ========== */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 8px 16px;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--gray);
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 8px 12px;
+            border-radius: 30px;
+        }
+        
+        .mobile-nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 3px;
+        }
+        
+        .mobile-nav-item.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        .mobile-nav-item:hover {
+            color: var(--primary);
+        }
+        
+        /* ========== FOOTER ========== */
+        .footer {
+            background: var(--dark);
+            color: #8a94a6;
+            padding: 60px 0 24px;
+            margin-top: 80px;
+        }
+        
+        .footer h4, .footer h5 {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .footer a {
+            color: #8a94a6;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .footer a:hover {
+            color: white;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            color: white;
+        }
+        
+        .social-icon:hover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            transform: translateY(-3px);
+            color: white;
+        }
+        
+        /* ========== SCROLL TO TOP ========== */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 48px;
+            height: 48px;
+            background: var(--white);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+        
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-top:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* ========== DROPDOWN MENU ========== */
+        .dropdown-menu {
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            padding: 8px;
+        }
+        
+        .dropdown-item {
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-weight: 500;
+            color: var(--gray);
+        }
+        
+        .dropdown-item:hover {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .dropdown-item i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        
+        /* ========== ALERT ========== */
+        .alert {
+            border: none;
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-section {
+                padding: 100px 0 60px;
+            }
+            
+            .mobile-bottom-nav {
+                display: flex;
+                justify-content: space-around;
+            }
+            
+            body {
+                padding-bottom: 90px;
+            }
+            
+            .search-container {
+                border-radius: 30px;
+            }
+            
+            .search-input {
+                padding: 14px 18px;
+            }
+            
+            .search-btn {
+                padding: 12px 20px;
+            }
+            
+            .stats-card {
+                margin-top: 30px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .search-btn span {
+                display: none;
+            }
+            
+            .search-btn i {
+                margin-right: 0;
+            }
+            
+            .search-btn {
+                padding: 12px 20px;
+            }
+        }
+        
+        /* ========== CUSTOM SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray);
+        }
+        
+        /* ========== NOTIFICATION BADGE ========== */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.65rem;
+            padding: 3px 6px;
+            border-radius: 40px;
+            background: var(--danger);
+        }
+        
+        /* ========== ANIMATION CLASSES ========== */
+        .fade-up {
+            animation: slideUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Desktop Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-bolt"></i>
+                <span>Rentify</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'listing-list' %}">
+                            <i class="fas fa-compass"></i> Explore
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'listing-create' %}">
+                            <i class="fas fa-plus-circle"></i> List Item
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'my-bookings' %}">
+                            <i class="fas fa-calendar-alt"></i> My Rentals
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+                <!-- Location Button -->
+                <div class="dropdown">
+                    <button class="btn location-btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-map-pin"></i>
+                        {% if user_city %}
+                            {{ user_city }}
+                        {% else %}
+                             Location
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="getLiveLocation()"><i class="fas fa-location-arrow"></i> Use Current Location</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'location-select' %}"><i class="fas fa-city"></i> Select City</a></li>
+                    </ul>
+                </div>
+                
+                {% if user.is_authenticated %}
+                <a class="nav-link position-relative" href="{% url 'chat-list' %}">
+                    <i class="fas fa-comments"style="font-size: 30px;"></i>
+                    <span id="chat-unread-badge" class="notification-badge" style="display: none;">0</span>
+                </a>
+                
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"style="font-size: 20px;"></i> {{ user.username|truncatechars:10 }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-id-card"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'change-password' %}"><i class="fas fa-lock"></i> Change Password</a></li>
+                        <li><a class="dropdown-item" href="{% url 'my-listings' %}"><i class="fas fa-box"></i> My Listings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary btn-sm">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Messages -->
+    <div class="container mt-5 pt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-circle-info me-2"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container position-relative" style="z-index: 1;">
+            <div class="row align-items-center">
+                <div class="col-lg-7" data-aos="fade-up" data-aos-duration="800">
+                    <h1 class="hero-title">
+                        Rent <span>Anything</span>,<br>
+                        Anywhere in Pakistan
+                    </h1>
+                    <p class="hero-subtitle">
+                        From electronics to vehicles, find what you need at the best prices. 
+                        Trusted by thousands of Pakistanis.
+                    </p>
+                    
+                    <!-- Smart Search Bar -->
+                    <div class="search-wrapper">
+                        <form method="GET" action="{% url 'smart-search' %}">
+                            <div class="search-container d-flex align-items-center">
+                                <input type="text" name="q" class="search-input" 
+                                       placeholder="Search... Try 'iPhone Karachi' or 'Under 5000'"
+                                       value="{{ request.GET.q }}">
+                                <button class="search-btn" type="submit">
+                                    <i class="fas fa-search"></i>
+                                    <span>Search</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Popular Tags -->
+                    <div class="popular-tags">
+                        <span class="text-muted me-2" style="font-size: 0.85rem;">Popular:</span>
+                        <a href="{% url 'listing-list' %}?category=electronics" class="popular-tag">
+                            <i class="fas fa-mobile-alt"></i> Electronics
+                        </a>
+                        <a href="{% url 'listing-list' %}?category=furniture" class="popular-tag">
+                            <i class="fas fa-couch"></i> Furniture
+                        </a>
+                        <a href="{% url 'listing-list' %}?category=vehicles" class="popular-tag">
+                            <i class="fas fa-car"></i> Vehicles
+                        </a>
+                        <a href="{% url 'listing-list' %}?category=clothing" class="popular-tag">
+                            <i class="fas fa-tshirt"></i> Clothing
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-5" data-aos="fade-up" data-aos-delay="200" data-aos-duration="800">
+                    <div class="stats-card">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-shield-alt fa-3x" style="color: var(--primary); opacity: 0.8;"></i>
+                            <h4 class="mt-3 mb-2 fw-bold">Rent with Trust</h4>
+                            <p class="text-muted">Secure payments & verified users</p>
+                        </div>
+                        <hr class="my-4">
+                        <div class="row g-3">
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="stat-number">15K+</div>
+                                    <div class="stat-label">Active Users</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div class="stat-number">8K+</div>
+                                    <div class="stat-label">Items Listed</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="stat-number">4.9</div>
+                                    <div class="stat-label">User Rating</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-bottom-nav">
+        <a href="{% url 'home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'listing-list' %}" class="mobile-nav-item">
+            <i class="fas fa-compass"></i>
+            <span>Explore</span>
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'listing-create' %}" class="mobile-nav-item">
+            <i class="fas fa-plus-circle"></i>
+            <span>List</span>
+        </a>
+        <a href="{% url 'my-bookings' %}" class="mobile-nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Rentals</span>
+        </a>
+        <a href="{% url 'profile' %}" class="mobile-nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}" class="mobile-nav-item">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Login</span>
+        </a>
+        <a href="{% url 'register' %}" class="mobile-nav-item">
+            <i class="fas fa-user-plus"></i>
+            <span>Sign Up</span>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Scroll to Top -->
+    <div class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h4 class="mb-3"><i class="fas fa-bolt me-2" style="color: var(--primary);"></i>Rentify</h4>
+                    <p class="opacity-75">Pakistan's most trusted rental marketplace. Rent anything, anywhere with complete safety and convenience.</p>
+                    <div class="mt-4">
+                        <a href="#" class="social-icon me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h5 class="mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1" style="font-size: 0.7rem;"></i> About Us</a></li>
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1" style="font-size: 0.7rem;"></i> How it Works</a></li>
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1" style="font-size: 0.7rem;"></i> Safety Tips</a></li>
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1" style="font-size: 0.7rem;"></i> Blog</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h5 class="mb-3">Support</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1" style="font-size: 0.7rem;"></i> Help Center</a></li>
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1" style="font-size: 0.7rem;"></i> Contact Us</a></li>
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1" style="font-size: 0.7rem;"></i> Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#"><i class="fas fa-chevron-right me-1" style="font-size: 0.7rem;"></i> Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="mb-3">Download App</h5>
+                    <p class="opacity-75 mb-3">Get the Rentify app for the best experience</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="#" class="btn btn-outline-light btn-sm rounded-3">
+                            <i class="fab fa-google-play me-2"></i> Google Play
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-sm rounded-3">
+                            <i class="fab fa-apple me-2"></i> App Store
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-5 mb-4" style="background: rgba(255,255,255,0.1);">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0 opacity-75">&copy; 2024 Rentify Pakistan. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0 opacity-75">Made with <i class="fas fa-heart" style="color: var(--danger);"></i> in Pakistan</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        AOS.init({ duration: 800, once: true, offset: 50 });
+        
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            const scrollTop = document.querySelector('.scroll-top');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+                scrollTop.classList.add('show');
+            } else {
+                navbar.classList.remove('scrolled');
+                scrollTop.classList.remove('show');
+            }
+        });
+        
+        function getLiveLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    fetch('/locations/set-live/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        })
+                    }).then(response => response.json()).then(data => {
+                        if (data.success) location.reload();
+                        else alert('Could not set location. Please try again.');
+                    });
+                }, function() {
+                    alert('Please allow location access to use this feature.');
+                });
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
+        }
+        
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                new bootstrap.Alert(alert).close();
+            });
+        }, 5000);
+        
+        function updateUnreadCount() {
+            fetch('/chat/unread-count/')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('chat-unread-badge');
+                    if (badge && data.unread_count > 0) {
+                        badge.textContent = data.unread_count > 9 ? '9+' : data.unread_count;
+                        badge.style.display = 'inline-block';
+                    } else if (badge) {
+                        badge.style.display = 'none';
+                    }
+                })
+                .catch(err => console.log('Chat count error:', err));
+        }
+        
+        setInterval(updateUnreadCount, 10000);
+        updateUnreadCount();
+        
+        // Add active state to mobile nav
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            if (window.location.pathname === item.getAttribute('href')) {
+                item.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

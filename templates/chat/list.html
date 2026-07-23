@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="fas fa-comments"></i> My Chats</h3>
+        </div>
+        <div class="card-body">
+            {% if chat_rooms %}
+                {% for room in chat_rooms %}
+                <a href="{% url 'chat-detail' room.id %}" class="text-decoration-none">
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ room.listing.title }}</h6>
+                                    <small class="text-muted">
+                                        Chat with: 
+                                        {% if request.user == room.buyer %}
+                                            {{ room.seller.username }}
+                                        {% else %}
+                                            {{ room.buyer.username }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                {% if room.unread > 0 %}
+                                    <span class="badge bg-danger rounded-pill">{{ room.unread }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-comments fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No chats yet</h4>
+                    <p class="text-muted">Start a chat by clicking "Chat with Seller" on any listing</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

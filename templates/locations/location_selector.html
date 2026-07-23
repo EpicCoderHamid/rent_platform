@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Location - Rentify</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .location-card {
+            max-width: 500px;
+            width: 90%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .location-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .location-body {
+            padding: 30px;
+        }
+        
+        .btn-location {
+            border-radius: 50px;
+            padding: 12px;
+            margin: 8px 0;
+        }
+        
+        .location-divider {
+            text-align: center;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .location-divider::before,
+        .location-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #ddd;
+        }
+        
+        .location-divider::before {
+            left: 0;
+        }
+        
+        .location-divider::after {
+            right: 0;
+        }
+        
+        .location-divider span {
+            background: white;
+            padding: 0 10px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="location-card">
+        <div class="location-header">
+            <i class="fas fa-map-marker-alt fa-4x mb-3"></i>
+            <h2>Choose Your Location</h2>
+            <p class="mb-0">Get personalized results near you</p>
+        </div>
+        
+        <div class="location-body">
+            <!-- Live Location Button -->
+            <button onclick="getLiveLocation()" class="btn btn-primary btn-location w-100">
+                <i class="fas fa-location-dot"></i> Use My Current Location
+            </button>
+            
+            <div class="location-divider">
+                <span>OR</span>
+            </div>
+            
+            <!-- Manual Location Selection -->
+            <form method="POST" action="{% url 'save-location' %}" id="location-form">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label">Select Province</label>
+                    <select name="province" id="province-select" class="form-select" required>
+                        <option value="">-- Select Province --</option>
+                        {% for province in provinces %}
+                            <option value="{{ province.id }}">{{ province.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Select City</label>
+                    <select name="city" id="city-select" class="form-select" required disabled>
+                        <option value="">-- First select province --</option>
+                    </select>
+                </div>
+                
+                <input type="hidden" name="latitude" id="latitude">
+                <input type="hidden" name="longitude" id="longitude">
+                <input type="hidden" name="use_live_location" id="use_live_location" value="off">
+                
+                <button type="submit" class="btn btn-success btn-location w-100" id="submit-btn" disabled>
+                    <i class="fas fa-check"></i> Confirm Location
+                </button>
+            </form>
+            
+            <p class="text-muted text-center mt-3 small">
+                <i class="fas fa-shield-alt"></i> Your location helps us show nearby items
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Get cities based on selected province
+        const provinceSelect = document.getElementById('province-select');
+        const citySelect = document.getElementById('city-select');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        provinceSelect.addEventListener('change', function() {
+            const provinceId = this.value;
+            
+            if (provinceId) {
+                fetch(`/locations/get-cities/?province_id=${provinceId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        citySelect.innerHTML = '<option value="">-- Select City --</option>';
+                        data.forEach(city => {
+                            citySelect.innerHTML += `<option value="${city.id}">${city.name}</option>`;
+                        });
+                        citySelect.disabled = false;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                citySelect.innerHTML = '<option value="">-- First select province --</option>';
+                citySelect.disabled = true;
+            }
+        });
+        
+        // Enable submit button when city is selected
+        citySelect.addEventListener('change', function() {
+            if (this.value) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        });
+        
+        // Get live location
+        function getLiveLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        document.getElementById('latitude').value = lat;
+                        document.getElementById('longitude').value = lng;
+                        document.getElementById('use_live_location').value = 'on';
+                        
+                        // Submit form
+                        document.getElementById('location-form').submit();
+                    },
+                    function(error) {
+                        alert('Unable to get your location. Please select manually.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser. Please select manually.');
+            }
+        }
+    </script>
+</body>
+</html>

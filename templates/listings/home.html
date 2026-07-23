@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-hand-holding-usd"></i> Rent Anything, Anywhere
+        </h1>
+        <p class="lead mb-4">Find the perfect item for rent in your city at affordable prices</p>
+        
+        
+        <!-- Categories -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h5>Popular Categories</h5>
+                <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
+                    <a href="{% url 'listing-list' %}?category=electronics" class="btn btn-outline-light">📱 Electronics</a>
+                    <a href="{% url 'listing-list' %}?category=furniture" class="btn btn-outline-light">🛋️ Furniture</a>
+                    <a href="{% url 'listing-list' %}?category=vehicles" class="btn btn-outline-light">🚗 Vehicles</a>
+                    <a href="{% url 'listing-list' %}?category=clothing" class="btn btn-outline-light">👕 Clothing</a>
+                    <a href="{% url 'listing-list' %}?category=books" class="btn btn-outline-light">📚 Books</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Items -->
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-fire"></i> Featured Items</h2>
+        <a href="{% url 'listing-list' %}" class="btn btn-outline-primary">View All <i class="fas fa-arrow-right"></i></a>
+    </div>
+    
+    {% if listings %}
+    <div class="row">
+        {% for listing in listings %}
+        <div class="col-md-4 col-lg-4 mb-4">
+            <div class="card card-hover h-100 shadow-sm">
+                {% if listing.image %}
+                <img src="{{ listing.image.url }}" class="card-img-top listing-image" alt="{{ listing.title }}">
+                {% else %}
+                <img src="https://via.placeholder.com/400x250?text=No+Image" class="card-img-top listing-image" alt="No Image">
+                {% endif %}
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2">{{ listing.get_category_display }}</span>
+                    <h5 class="card-title">{{ listing.title|truncatechars:30 }}</h5>
+                    <p class="card-text text-muted small">{{ listing.description|truncatewords:15 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="price-tag">PKR {{ listing.price_per_day }}/day</span>
+                        <span><i class="fas fa-map-marker-alt"></i> {{ listing.city|truncatechars:15 }}</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{% url 'listing-detail' listing.id %}" class="btn btn-primary w-100">
+                        <i class="fas fa-eye"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle"></i> No items available yet. Be the first to <a href="{% url 'listing-create' %}">add an item</a>!
+    </div>
+    {% endif %}
+</div>
+
+<!-- How It Works -->
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row text-center">
+            <div class="col-md-4 mb-3">
+                <div class="display-1 text-primary">🔍</div>
+                <h4>1. Search</h4>
+                <p>Find items you want to rent in your city</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="display-1 text-primary">📅</div>
+                <h4>2. Book</h4>
+                <p>Select dates and confirm your booking</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="display-1 text-primary">🎉</div>
+                <h4>3. Enjoy</h4>
+                <p>Pick up the item and start using it</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

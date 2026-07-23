@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+    
+    <!-- Fallback Message -->
+    {% if search_context.used_fallback %}
+    <div class="alert alert-warning mb-4">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-map-marker-alt fa-2x me-3"></i>
+            <div class="flex-grow-1">
+                <strong><i class="fas fa-info-circle"></i> Location Notice</strong>
+                <p class="mb-0">{{ search_context.fallback_message }}</p>
+            </div>
+            {% if search_context.available_cities %}
+            <div>
+                <small class="text-muted">Available in:</small>
+                {% for city in search_context.available_cities %}
+                <span class="badge bg-secondary">{{ city }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Spell Correction Alert -->
+    {% if search_context.was_corrected %}
+    <div class="alert alert-info mb-4">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-language fa-2x me-3"></i>
+            <div>
+                <strong>Did you mean?</strong><br>
+                <span class="text-decoration-line-through text-muted">"{{ search_context.original_query }}"</span>
+                <span class="mx-2">→</span>
+                <strong class="text-success">"{{ search_context.corrected_query }}"</strong>
+            </div>
+        </div>
+        {% if search_context.suggestions %}
+        <div class="mt-2">
+            <small>Other suggestions:</small>
+            {% for suggestion in search_context.suggestions %}
+            <a href="?q={{ suggestion }}" class="btn btn-sm btn-outline-primary ms-2">{{ suggestion }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <!-- Search Summary -->
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h4 class="mb-2">
+                        <i class="fas fa-search text-primary"></i> 
+                        Search Results: "{{ search_query }}"
+                    </h4>
+                    <div class="mt-2">
+                        {% if search_context.detected_city %}
+                        <span class="badge bg-info me-2 p-2"><i class="fas fa-map-marker-alt"></i> {{ search_context.detected_city }}</span>
+                        {% endif %}
+                        {% if search_context.detected_category %}
+                        <span class="badge bg-success me-2 p-2"><i class="fas fa-tag"></i> {{ search_context.detected_category }}</span>
+                        {% endif %}
+                        {% if search_context.detected_price_min or search_context.detected_price_max %}
+                        <span class="badge bg-warning text-dark me-2 p-2"><i class="fas fa-rupee-sign"></i> 
+                            {% if search_context.detected_price_min and search_context.detected_price_max %}
+                                PKR {{ search_context.detected_price_min }} - {{ search_context.detected_price_max }}
+                            {% elif search_context.detected_price_min %}≥ PKR {{ search_context.detected_price_min }}
+                            {% elif search_context.detected_price_max %}≤ PKR {{ search_context.detected_price_max }}
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                        {% if search_context.detected_sort %}
+                        <span class="badge bg-secondary me-2 p-2"><i class="fas fa-sort"></i> 
+                            {% if search_context.detected_sort == 'newest' %}Newest First
+                            {% elif search_context.detected_sort == 'price_low' %}Price: Low to High
+                            {% elif search_context.detected_sort == 'price_high' %}Price: High to Low
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <h5 class="text-muted">{{ result_count }} items found</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results Grid -->
+    {% if listings %}
+    <div class="row">
+        {% for listing in listings %}
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if listing.image %}
+                <img src="{{ listing.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ listing.title }}">
+                {% else %}
+                <div class="bg-light text-center py-5"><i class="fas fa-image fa-3x text-muted"></i></div>
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ listing.title|truncatechars:35 }}</h6>
+                    <p class="card-text small text-muted">{{ listing.description|truncatewords:12 }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="text-primary fw-bold">PKR {{ listing.price_per_day }}/day</span>
+                        <small class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ listing.city }}</small>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3">
+                    <a href="{% url 'listing-detail' listing.id %}" class="btn btn-primary w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if listings.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if listings.has_previous %}
+            <li class="page-item"><a class="page-link" href="?q={{ search_query }}&page={{ listings.previous_page_number }}">Previous</a></li>
+            {% endif %}
+            {% for num in listings.paginator.page_range %}
+            <li class="page-item {% if listings.number == num %}active{% endif %}"><a class="page-link" href="?q={{ search_query }}&page={{ num }}">{{ num }}</a></li>
+            {% endfor %}
+            {% if listings.has_next %}
+            <li class="page-item"><a class="page-link" href="?q={{ search_query }}&page={{ listings.next_page_number }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="alert alert-info text-center p-5">
+        <i class="fas fa-frown fa-3x mb-3"></i>
+        <h4>No items found for "{{ search_query }}"</h4>
+        <p>Try different keywords or check your spelling</p>
+        <hr>
+        <div class="mt-3">
+            <a href="?q=iphone" class="btn btn-sm btn-outline-primary m-1">iphone</a>
+            <a href="?q=laptop karachi" class="btn btn-sm btn-outline-primary m-1">laptop karachi</a>
+            <a href="?q=under 5000" class="btn btn-sm btn-outline-primary m-1">under 5000</a>
+            <a href="?q=car lahore" class="btn btn-sm btn-outline-primary m-1">car lahore</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

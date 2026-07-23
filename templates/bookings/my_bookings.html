@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="mb-4"><i class="fas fa-calendar-alt"></i> My Bookings</h1>
+    
+    <!-- Bookings as Buyer (Renter) -->
+    <h3 class="mt-4 text-primary">
+        <i class="fas fa-user"></i> Bookings I've Made
+    </h3>
+    <div class="row">
+        {% if buyer_bookings %}
+            {% for booking_item in buyer_bookings %}
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title">{{ booking_item.listing.title }}</h5>
+                            <span class="badge {% if booking_item.status == 'pending' %}bg-warning{% elif booking_item.status == 'confirmed' %}bg-success{% elif booking_item.status == 'completed' %}bg-info{% else %}bg-danger{% endif %}">
+                                {{ booking_item.status|title }}
+                            </span>
+                        </div>
+                        <p class="text-muted small">
+                            <i class="fas fa-store"></i> Owner: {{ booking_item.listing.owner.username }}
+                        </p>
+                        <p><i class="fas fa-calendar"></i> <strong>Dates:</strong> {{ booking_item.start_date }} to {{ booking_item.end_date }}</p>
+                        <p><i class="fas fa-money-bill"></i> <strong>Total Price:</strong> PKR {{ booking_item.total_price }}</p>
+                        
+                        <!-- ✅ FIXED: 2 arguments - listing_id aur seller_id (owner) -->
+                        <a href="{% url 'start-chat' booking_item.listing.id booking_item.listing.owner.id %}" class="btn btn-sm btn-info">
+                            <i class="fas fa-comment"></i> Chat with Owner
+                        </a>
+                        
+                        <!-- Cancel Button for Pending Bookings -->
+                        {% if booking_item.status == 'pending' and booking_item.user == request.user %}
+                            <a href="{% url 'cancel-booking' booking_item.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Cancel this booking?')">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">You haven't made any bookings yet.</div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Bookings as Seller (Item Owner) -->
+    <h3 class="mt-5 text-success">
+        <i class="fas fa-store"></i> Bookings for My Items
+    </h3>
+    <div class="row">
+        {% if seller_bookings %}
+            {% for booking_item in seller_bookings %}
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title">{{ booking_item.listing.title }}</h5>
+                            <span class="badge {% if booking_item.status == 'pending' %}bg-warning{% elif booking_item.status == 'confirmed' %}bg-success{% elif booking_item.status == 'completed' %}bg-info{% else %}bg-danger{% endif %}">
+                                {{ booking_item.status|title }}
+                            </span>
+                        </div>
+                        <p class="text-muted small">
+                            <i class="fas fa-user"></i> Renter: {{ booking_item.user.username }}
+                        </p>
+                        <p><i class="fas fa-calendar"></i> <strong>Dates:</strong> {{ booking_item.start_date }} to {{ booking_item.end_date }}</p>
+                        <p><i class="fas fa-money-bill"></i> <strong>Total Price:</strong> PKR {{ booking_item.total_price }}</p>
+                        
+                        <!-- ✅ FIXED: 2 arguments - listing_id aur seller_id (renter/buyer) -->
+                        <a href="{% url 'start-chat' booking_item.listing.id booking_item.user.id %}" class="btn btn-sm btn-info">
+                            <i class="fas fa-comment"></i> Chat with Renter
+                        </a>
+                        
+                        <!-- Action Buttons for Seller -->
+                        {% if booking_item.status == 'pending' %}
+                            <a href="{% url 'update-booking' booking_item.id 'confirmed' %}" class="btn btn-sm btn-success">
+                                <i class="fas fa-check"></i> Confirm
+                            </a>
+                            <a href="{% url 'update-booking' booking_item.id 'cancelled' %}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        {% elif booking_item.status == 'confirmed' %}
+                            <a href="{% url 'update-booking' booking_item.id 'completed' %}" class="btn btn-sm btn-info">
+                                <i class="fas fa-check-double"></i> Mark Completed
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">No bookings for your items yet.</div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
