@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'django-insecure-your-secret-key-here'
+SECRET_KEY = 'ru#d&x02bl$_9gr@%clk2lij#xir!ih)0vb!h65pxuvq2lp-uc'
 DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'rent_platform.onrender.com']
 
